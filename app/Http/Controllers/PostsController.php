@@ -52,7 +52,8 @@ class PostsController extends Controller
             'content' => $request->content,
             'image' => $image,
             'published_at' => $request->published_at,
-            'category_id' => $request->category
+            'category_id' => $request->category,
+            'user_id' => auth()->user()->id
         ]);
 
         if($request->tags) {
@@ -72,9 +73,22 @@ class PostsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($post)
     {
-        //
+        return view('blog.show')->with('post', $post);
+    }
+
+    public function category(Category $category)
+    {
+        return view('blog.category')
+        ->with('category', $category)
+        ->with('posts', $category->posts()->simplePaginate(3))
+        ->with('categories', Category::all());
+    }
+
+    public function tag(Tag $tag)
+    {
+        return view('blog.tag')->with('tag', $tag)->with('post', $tag->posts()->simplePaginate(3))->with('posts', Post::all());
     }
 
     /**
